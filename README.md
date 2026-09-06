@@ -46,16 +46,36 @@ Nothing here takes custody. Routers hold no balance between transactions, and th
 
 ---
 
-### <img src="assets/mark.png" width="20" align="center"> [cluby](https://github.com/clubytech/cluby)
+### The code
 
-The whole thing. Three oracles, a flash-loan liquidator, a leverage router, a keeper, an MCP server, and 101 tests.
+```mermaid
+flowchart LR
+    O["cluby-oracles"] --> M["Morpho Blue<br/><i>not ours</i>"]
+    L["cluby-lens"] --> M
+    FL["cluby-liquidator"] --> M
+    LR["cluby-leverage-router"] --> M
+    K["cluby-keeper"] --> L
+    K --> FL
+    SDK["cluby-sdk"] --> L
+    MCP["cluby-mcp"] --> SDK
 
-| | |
-|---|---|
-| **A TWAP that checks its own pool** | It refuses to deploy against a pool whose observation ring is too short for its own window. Most do not check, and a pool that cannot answer a thirty-minute question will happily answer a wrong one |
-| **A liquidator with a floor** | It reads a price from the oracle *at the moment it acts* and will not sell collateral more than 8% below it. A liquidator with no floor dumps into a thin pool and hands the difference to whoever is on the other side |
-| **A keeper that can only subtract** | It cannot open a position, move liquidity, change a parameter, or touch user funds. Every power it has reduces exposure |
-| **An MCP server** | So an agent can read the protocol directly — markets, positions, and pre-trade quotes computed by the same arithmetic the interface signs against |
+    style M fill:#002C1E,color:#fff
+    style O fill:#03926B,color:#fff
+    style SDK fill:#0FAF83,color:#fff
+```
+
+| Repository | What it holds | |
+|---|---|---|
+| [**cluby**](https://github.com/clubytech/cluby) | The monorepo — interface, indexer, deploys, 101 tests | |
+| [**cluby-oracles**](https://github.com/clubytech/cluby-oracles) | A TWAP that verifies its own pool's memory before it will deploy | `10 tests` |
+| [**cluby-liquidator**](https://github.com/clubytech/cluby-liquidator) | Liquidation with zero capital and a floor it will not sell below | `4 tests` |
+| [**cluby-leverage-router**](https://github.com/clubytech/cluby-leverage-router) | Leveraged open and close in one transaction | `9 tests` |
+| [**cluby-lens**](https://github.com/clubytech/cluby-lens) | Every number the site reads, with pending interest applied | `12 tests` |
+| [**cluby-incentives**](https://github.com/clubytech/cluby-incentives) | Rebates that cannot be published unfunded | `16 tests` |
+| [**cluby-token-registry**](https://github.com/clubytech/cluby-token-registry) | A contract address that changes only on chain | `7 tests` |
+| [**cluby-keeper**](https://github.com/clubytech/cluby-keeper) | A watchdog whose every power reduces exposure | |
+| [**cluby-mcp**](https://github.com/clubytech/cluby-mcp) | So an agent can read the protocol directly | |
+| [**cluby-sdk**](https://github.com/clubytech/cluby-sdk) | One implementation of the arithmetic, shared by all of them | |
 
 ---
 
